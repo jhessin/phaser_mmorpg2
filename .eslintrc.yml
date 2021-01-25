@@ -1,0 +1,42 @@
+extends:
+  - airbnb-typescript
+env:
+  browser: true
+  es2021: true
+  node: true
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: 12
+  sourceType: module
+  project: ./tsconfig.json
+plugins:
+  - '@typescript-eslint'
+settings:
+  import/resolver:
+    node:
+      extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .json
+rules:
+  no-shadow: off
+  '@typescript-eslint/no-shadow': off
+  no-console:
+    - warn
+    - allow:
+      - warn
+      - error
+  import/extensions:
+    - error
+    - ignorePackages
+    -
+      ts:
+        never
+      tsx:
+        never
+      js:
+        never
+      jsx:
+        never
