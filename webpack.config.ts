@@ -24,6 +24,7 @@ const config: webpack.Configuration = {
   devServer: {
     contentBase: './dist',
     open: true,
+    hot: true,
   },
   // The output path
   output: {
@@ -77,7 +78,7 @@ const config: webpack.Configuration = {
     new HtmlWebpackPlugin({
       // where your html template is located.
       title: 'Phaser Game',
-      template: 'index.html',
+      // template: 'index.html',
     }),
   ],
   resolve: {
