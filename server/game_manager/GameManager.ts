@@ -22,6 +22,38 @@ export function getTiledProperty(obj: LayerObject, propertyName: string) {
   return null;
 }
 
+type LayerObject = {
+  gid: number;
+  height: number;
+  id: number;
+  name: string;
+  properties?: {
+    name: string;
+    type: string;
+    value: string;
+  }[];
+  rotation: number;
+  type: string;
+  visible: boolean;
+  width: number;
+  x: number;
+  y: number;
+};
+
+type LayerData = {
+  data?: number[];
+  height?: number;
+  id?: number;
+  name: string;
+  opacity: number;
+  type: string;
+  visible: boolean;
+  width?: number;
+  x: number;
+  y: number;
+  objects?: LayerObject[];
+};
+
 export default class GameManager {
   spawners: Map<string, any>;
 
