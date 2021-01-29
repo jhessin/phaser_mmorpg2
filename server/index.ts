@@ -2,19 +2,30 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-// import passport from 'passport';
+import passport from 'passport';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
-import config from '../webpack.config';
+import webpackConfig from '../webpack.config';
 import {
   port, mongoConnectionUrl, mongoUserName, mongoPassword,
 } from './env';
+import HttpException from './HttpException';
+import {
+  routes, passwordRoutes, secureRoutes,
+} from './routes';
+import GameManager from './game_manager';
+
+// require passport auth
+import './auth/auth';
 
 const app = express();
 const server = require('http').Server(app);
-// const io = require('socket.io')(server);
+const io = require('socket.io')(server);
+
+const game = new GameManager(io);
+game.setup();
 
 // setup mongo connection
 const mongoConfig: mongoose.ConnectOptions = {
@@ -47,14 +58,14 @@ mongoose.connection.on('error', (err: Error) => {
 // config.entry.app.unshift('webpack-hot-middleware/client?reload=true&timeout=1000');
 
 // Add HMR plugin
-config.plugins.push(new webpack.HotModuleReplacementPlugin());
+webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
-const compiler = webpack(config);
+const compiler = webpack(webpackConfig);
 
 // Enable 'webpack-dev-middleware'
-if (typeof config.output.publicPath === 'string') {
+if (typeof webpackConfig.output.publicPath === 'string') {
   app.use(webpackDevMiddleware(compiler, {
-    publicPath: config.output.publicPath,
+    publicPath: webpackConfig.output.publicPath,
   }));
 } else {
   app.use(webpackDevMiddleware(compiler, {
@@ -74,6 +85,30 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+// setup routes
+app.use('/', routes);
+app.use('/', passwordRoutes);
+app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
+
+// catch all other routes
+app.use((_req, res) => {
+  res.status(404).json({
+    message: '404 - Not Found)',
+    status: 404,
+  });
+});
+
+// handle errors
+app.use((
+  err: HttpException,
+  _req: express.Request,
+  res: express.Response,
+) => {
+  res.status(err.status || 500).json({
+    error: err.message,
+    status: 500,
+  });
+});
 // -------------
 
 let runOnce = false;
