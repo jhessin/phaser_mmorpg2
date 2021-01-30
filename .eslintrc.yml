@@ -21,6 +21,7 @@ settings:
         - .tsx
         - .json
 rules:
+  no-param-reassign: off
   no-shadow: off
   '@typescript-eslint/no-shadow': off
   no-console:
@@ -28,6 +29,7 @@ rules:
     - allow:
       - warn
       - error
+  import/no-cycle: off
   import/extensions:
     - error
     - ignorePackages
