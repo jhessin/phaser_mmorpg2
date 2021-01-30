@@ -9,7 +9,9 @@
     "build": "tsc",
     "dev": "nodemon",
     "lint": "eslint --fix .",
-    "start": "ts-node server/index.ts"
+    "start": "ts-node server/index.ts",
+    "mongo:up": "docker-compose up -d",
+    "mongo:down": "docker-compose down"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -37,6 +39,7 @@
     "cookie-parser": "^1.4.5",
     "copy-webpack-plugin": "^6.3.2",
     "css-loader": "^5.0.1",
+    "docker-compose": "^0.23.6",
     "dotenv": "^8.2.0",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
