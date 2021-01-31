@@ -1,6 +1,5 @@
 import 'phaser';
 import { ChestModel, MonsterModel, PlayerModel } from '../game_manager';
-import Game from '../index';
 
 import {
   Chest, GameMap, Monster, PlayerContainer,
@@ -40,7 +39,7 @@ export default class GameScene extends Phaser.Scene {
     this.scene.launch('Ui');
 
     // get a reference to our socket
-    const game = this.sys.game as Game;
+    const { game } = window;
     this.socket = game.globals.socket;
 
     // Listen for socket events

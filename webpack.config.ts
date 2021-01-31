@@ -10,21 +10,20 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 // This plugin will remove all files inside webpack's output.path directory,
 // as well as all unused webpack assets after every successful rebuild.
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 
 const config: webpack.Configuration = {
   // enable webpack's built-in optimizations
   // that correspond to development
   mode: 'development',
   // the main entry point
-  entry: {
-    app: './client/index.ts',
-  },
+  entry: './client/index.ts',
   devtool: 'inline-source-map',
   // Dev Server settings
   devServer: {
-    contentBase: './dist',
+    contentBase: path.resolve(__dirname, 'dist'),
+    writeToDisk: true,
     open: true,
-    hot: true,
   },
   // The output path
   output: {
@@ -70,6 +69,13 @@ const config: webpack.Configuration = {
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'assets/**/*',
+        },
+      ],
+    }),
     // config webpack to handle renderer swapping
     new webpack.DefinePlugin({
       CANVAS_RENDERER: JSON.stringify(true),
