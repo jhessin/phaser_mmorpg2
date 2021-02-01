@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-import passport from 'passport';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
@@ -12,13 +11,7 @@ import {
   port, mongoConnectionUrl, mongoUserName, mongoPassword,
 } from './env';
 import HttpException from './HttpException';
-import {
-  routes, passwordRoutes, secureRoutes,
-} from './routes';
 import GameManager from './game_manager';
-
-// require passport auth
-import './auth/auth';
 
 const app = express();
 const server = require('http').Server(app);
@@ -53,10 +46,6 @@ mongoose.connection.on('error', (err: Error) => {
   process.exit(1);
 });
 
-// reload=true: Enable autoreloading when changing JS files or content
-// timeout=1000: Time for disconnecting from server to reconnecting
-// config.entry.app.unshift('webpack-hot-middleware/client?reload=true&timeout=1000');
-
 // Add HMR plugin
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
@@ -76,19 +65,12 @@ if (typeof webpackConfig.output.publicPath === 'string') {
 // Enable 'webpack-hot-middleware'
 app.use(webpackHotMiddleware(compiler));
 
-// app.use(express.static('./public'));
-
 // API Goes here
 // parse application/x-www-form-urlencoded data
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse json objects
 app.use(bodyParser.json());
 app.use(cookieParser());
-
-// setup routes
-app.use('/', routes);
-app.use('/', passwordRoutes);
-app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 
 // catch all other routes
 app.use((_req, res) => {
